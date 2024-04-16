@@ -1,0 +1,82 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                   String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                 String
+  email                String  @unique
+  provider             String
+  firstAccess          Boolean @default(true)
+  country              String
+  password             String?
+  stripeCustomerId     String? @unique
+  stripeSubscriptionId String? @unique
+  tempToken            String?
+  verifiedEmail        Boolean @default(false)
+  metadata             Json?
+  paymentIntentStatus  String?
+  subscribeStatus      String  @default("unfinished")
+
+  createdAt DateTime   @default(now())
+  updateAt  DateTime   @updatedAt
+  Patients  Patients[]
+}
+
+model Notes {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tags        String[] @default([])
+  status      String   @default("ready_for_analyse")
+  title       String?
+  note        String
+  summary     String
+  session     String
+  description String?
+
+  patientId String   @db.Uuid
+  createdAt DateTime @default(now())
+  updateAt  DateTime @updatedAt
+}
+
+model Analyse {
+  id       String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title    String?
+  analysed Boolean  @default(false)
+  result   String?
+  usage    Json?
+  keywords String[]
+  sessions String[]
+
+  patientId String   @db.Uuid
+  createdAt DateTime @default(now())
+  updateAt  DateTime @updatedAt
+
+  Patient Patients? @relation(fields: [patientId], references: [id])
+}
+
+model Patients {
+  id          String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String
+  description String
+
+  userId    String   @db.Uuid
+  createdAt DateTime @default(now())
+  updateAt  DateTime @updatedAt
+
+  User    User?     @relation(fields: [userId], references: [id])
+  Analyse Analyse[]
+}
+
+model Emails {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email     String
+  createdAt DateTime @default(now())
+}

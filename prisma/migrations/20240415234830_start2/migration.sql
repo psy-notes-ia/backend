@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "Analyse" ADD COLUMN     "title" TEXT,
+ALTER COLUMN "result" DROP NOT NULL,
+ALTER COLUMN "usage" DROP NOT NULL;
