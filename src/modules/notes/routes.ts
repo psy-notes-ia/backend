@@ -7,8 +7,10 @@ function NotesRouter(router: any, opts: any, done: any) {
 
   router.post("/", handler.createNote);
   router.get("/", handler.getNotes);
-  router.get("/:id", handler.getNotesById);
-  router.patch("/:id", handler.updateNote);
+  router.get("/:pacientId", handler.getNotes);
+  router.get("/single/:noteId", handler.getNotesById);
+  router.delete("/:noteId", handler.deleteNote);
+  router.patch("/:pacientId", handler.updateNote);
   done();
 }
 

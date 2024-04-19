@@ -7,6 +7,7 @@ import TestWorker from "../modules/analyse/test-worker";
 import AuthMiddlewareHandler from "../middlewares/ensureAuthenticated";
 import LandingRouter from "../modules/landing/routes";
 import { NotesRouter } from "../modules/notes/routes";
+import { PacientsRouter } from "../modules/pacient/routes";
 
 export function PublicAppRouter(
   fastify: FastifyInstance,
@@ -28,6 +29,7 @@ export function PrivateAppRouter(
   fastify.addHook("preHandler", AuthMiddlewareHandler);
   fastify.register(UserRouter, { prefix: "/user" });
   fastify.register(AnalyseRouter, { prefix: "/ia" });
+  fastify.register(PacientsRouter, { prefix: "/pacients" });
   fastify.register(NotesRouter, { prefix: "/notes" });
   fastify.register(PaymentRouter, { prefix: "/pay" });
 

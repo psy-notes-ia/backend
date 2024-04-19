@@ -28,7 +28,7 @@ model User {
 
   createdAt DateTime   @default(now())
   updateAt  DateTime   @updatedAt
-  Patients  Patients[]
+  Patients  Pacients[]
 }
 
 model Notes {
@@ -44,6 +44,8 @@ model Notes {
   patientId String   @db.Uuid
   createdAt DateTime @default(now())
   updateAt  DateTime @updatedAt
+
+  Pacient Pacients? @relation(fields: [patientId], references: [id])
 }
 
 model Analyse {
@@ -59,13 +61,12 @@ model Analyse {
   createdAt DateTime @default(now())
   updateAt  DateTime @updatedAt
 
-  Patient Patients? @relation(fields: [patientId], references: [id])
+  Pacient Pacients? @relation(fields: [patientId], references: [id])
 }
 
-model Patients {
-  id          String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name        String
-  description String
+model Pacients {
+  id   String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name String
 
   userId    String   @db.Uuid
   createdAt DateTime @default(now())
@@ -73,6 +74,7 @@ model Patients {
 
   User    User?     @relation(fields: [userId], references: [id])
   Analyse Analyse[]
+  Notes   Notes[]
 }
 
 model Emails {

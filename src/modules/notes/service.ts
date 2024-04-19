@@ -27,16 +27,24 @@ export default class NotesService {
       select: {
         id: true,
         title: true,
-        description: true,
-        status: true,
-        createdAt: true,
+        note: true,
+        tags: true,
+        session: true,
+        summary: true,
+
       },
+      take:6
     });
   }
 
-  async getById(id: string, freePlan: boolean) {
-    return await prisma.notes.findUnique({
-      where: { id: id },
+  async getById(id: string) {
+    return await prisma.notes.findMany({
+      where: { id },
+    });
+  }
+  async delete(id: string) {
+    return await prisma.notes.delete({
+      where: { id },
     });
   }
 
