@@ -7,6 +7,7 @@ function PacientsRouter(router: any, opts: any, done: any) {
 
   router.post("/", handler.createPacient);
   router.get("/", handler.getAllPacients);
+  router.get("/:q", handler.getByQuery);
   router.delete("/:id", handler.deletePacient);
   done();
 }

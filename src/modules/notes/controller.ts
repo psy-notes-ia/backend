@@ -19,9 +19,17 @@ export default class FormController {
     if (!pacientId) {
       reply.status(403).send("bus id not provided");
     }
-    const response = await service.getAll(pacientId);
+    const response = await service.getAllByPacient(pacientId);
     return reply.status(200).send(response);
   }
+
+  async getAllNotes(request: FastifyRequest, reply: FastifyReply) {
+    const { id }: any = request.user;
+
+    const response = await service.getAll(id);
+    return reply.status(200).send(response);
+  }
+
   async deleteNote(request: FastifyRequest, reply: FastifyReply) {
     const { noteId }: any = request.params;
 
@@ -32,6 +40,14 @@ export default class FormController {
     return reply.status(200).send(response);
   }
 
+  async getByQuery(request: FastifyRequest, reply: FastifyReply) {
+    const { q }: any = request.params;
+
+    const res = await service.searchByQuery(q);
+
+    return reply.status(200).send(res);
+  }
+
   async getNotesById(request: FastifyRequest, reply: FastifyReply) {
     const { noteId }: any = request.params;
 
@@ -40,6 +56,17 @@ export default class FormController {
     }
 
     const response = await service.getById(noteId);
+    return reply.status(200).send(response);
+  }
+
+  async getNotesSession(request: FastifyRequest, reply: FastifyReply) {
+    const { pacientId }: any = request.params;
+
+    if (!pacientId) {
+      reply.status(403).send("pacient id not provided");
+    }
+
+    const response = await service.getAllNoteSessions(pacientId);
     return reply.status(200).send(response);
   }
 

@@ -6,14 +6,15 @@ const service = new PacientService();
 
 export default class PacientController {
   async createPacient(request: FastifyRequest, reply: FastifyReply) {
-    const {name}:any = request.body;
+    const data:any = request.body;
     const {id}:any = request.user;
 
     console.log(id);
-    const res = await service.create(name, id);
+    const res = await service.create(data, id);
 
     return reply.status(201).send(res);
   }
+
   async getAllPacients(request: FastifyRequest, reply: FastifyReply) {
    const { id }: any = request.user;
 
@@ -21,6 +22,14 @@ export default class PacientController {
 
     return reply.status(200).send(res);
   }
+
+  async getByQuery(request: FastifyRequest, reply: FastifyReply) {
+    const { q }: any = request.params;
+ 
+     const res = await service.searchByQuery(q);
+ 
+     return reply.status(200).send(res);
+   }
 
   async deletePacient(request: FastifyRequest, reply: FastifyReply) {
     const { id }: any = request.params;
@@ -32,6 +41,7 @@ export default class PacientController {
     ;
     return reply.status(200).send(response);
   }
+
 }
 
 function generateReferenceCode(length: number = 10): string {

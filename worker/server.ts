@@ -29,7 +29,7 @@ async function startConsumer(consumerNumber: number) {
 
       const data = JSON.parse(msg?.content.toString() ?? "");
 
-      const { sessions, id, notesId, notesStr, tokens } = data;
+      const { id, notesStr, tokens, notesId } = data;
 
       var startTime = performance.now();
 
@@ -40,15 +40,16 @@ async function startConsumer(consumerNumber: number) {
             where: { id },
             data: {
               analysed: true,
-              sessions: sessions,
               usage: response.usage,
+              attentionPoints: response.attention_points,
               result: response.result,
               keywords: response.keywords,
+            
             },
           });
 
           await prisma.notes.updateMany({
-            data: { status: "analysed" },
+            data: {  analysed: true, },
             where: { id: { in: notesId } },
           });
           if (msg) channel.ack(msg);
@@ -57,6 +58,12 @@ async function startConsumer(consumerNumber: number) {
         }
       } else {
         console.log("unable to process form data: " + id);
+        await prisma.analyse.update({
+          where: { id },
+          data: {
+            error: true,
+          },
+        });
       }
       var endTime = performance.now();
       console.log(`Took ${(endTime - startTime) / 1000} seconds`);

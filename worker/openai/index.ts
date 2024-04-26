@@ -27,12 +27,11 @@ type ResponseInsight = {
 
 class OpenAiRepositoryClass {
   async generateAnalyse(
-    notes: string,
+    notes: string
    ): Promise<any | null> {
-    var systemStr =
-      "considere que você é um especialista em psicologia e analise do comportamento de pacientes por anotações";
+    var systemStr = "Como especialista em psicologia e análise comportamental, utilizo anotações detalhadas para compreender o progresso e comportamento dos pacientes.";
     var promptStr =
-      "Dados as anotações das sessões terapeuticas, gere uma profunda analise do progresso e insights do paciente conforme o andamento dos encontros, gere tambem ketwords da analise. Anotações para cada sessão:"+notes;
+      "Com base nas anotações das sessões terapêuticas, realize uma análise aprofundada e precisa do progresso do paciente, insights comportamentais ao longo das sessões e identifique pontos de atenção relevantes. As anotações de cada sessão estão disponíveis em: "+notes;
 
     const config = { model: "gpt-3.5-turbo-0125", max: 4000 };
 
@@ -46,6 +45,7 @@ class OpenAiRepositoryClass {
       // ),
       keywords: z.array(z.string()),
       result: z.string(),
+      attention_points:z.array(z.string()),
     });
 
     const gptResponse = await openai.chat.completions.create({
@@ -74,19 +74,11 @@ class OpenAiRepositoryClass {
         gptResponse.choices[0].message!.function_call!.arguments!
       );
       var usage = JSON.stringify(gptResponse.usage);
-      console.dir(structuredResponse);
+      console.log(usage);
 
-      // let { keywords, result } = structuredResponse;
+      let { keywords, result, attentionPoints } = structuredResponse;
 
-      // const all_insights = (insights as []).map((e: any) => {
-      //   return {
-      //     title: e.insightTitle,
-      //     description: e.insightDescription,
-      //     type: e.insightType,
-      //   };
-      // });
-
-      // return { all_insights, keywords, result, stats, usage };
+      return { keywords, result, attentionPoints, usage };
     } catch (error) {
       console.log("formato invalido");
       console.log(error);

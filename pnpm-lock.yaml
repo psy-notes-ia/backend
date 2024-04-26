@@ -86,6 +86,12 @@ dependencies:
   tsx:
     specifier: ^4.7.1
     version: 4.7.1
+  zod:
+    specifier: ^3.23.0
+    version: 3.23.0
+  zod-to-json-schema:
+    specifier: ^3.22.5
+    version: 3.22.5(zod@3.23.0)
 
 devDependencies:
   '@types/amqplib':
@@ -3093,3 +3099,15 @@ packages:
   /yn@3.1.1:
     resolution: {integrity: sha512-Ux4ygGWsu2c7isFWe8Yu1YluJmqVhxqK2cLXNQA5AcC3QfbGNpM7fu0Y8b/z16pXLnFxZYvWhd3fhBY9DLmC6Q==}
     engines: {node: '>=6'}
+
+  /zod-to-json-schema@3.22.5(zod@3.23.0):
+    resolution: {integrity: sha512-+akaPo6a0zpVCCseDed504KBJUQpEW5QZw7RMneNmKw+fGaML1Z9tUNLnHHAC8x6dzVRO1eB2oEMyZRnuBZg7Q==}
+    peerDependencies:
+      zod: ^3.22.4
+    dependencies:
+      zod: 3.23.0
+    dev: false
+
+  /zod@3.23.0:
+    resolution: {integrity: sha512-OFLT+LTocvabn6q76BTwVB0hExEBS0IduTr3cqZyMqEDbOnYmcU+y0tUAYbND4uwclpBGi4I4UUBGzylWpjLGA==}
+    dev: false

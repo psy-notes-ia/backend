@@ -1,11 +1,11 @@
 import prisma from "../../prisma";
 
 export default class PacientService {
-  async create(name: string, id:string) {
+  async create(data: any, id: string) {
     return await prisma.pacients.create({
       data: {
-        name: name,
-        userId: id
+        ...data,
+        userId: id,
       },
     });
   }
@@ -15,10 +15,18 @@ export default class PacientService {
       where: { id },
     });
   }
+
   async fetchAll(id: string) {
     return await prisma.pacients.findMany({
       where: { userId: id },
-      include: { _count: { select: { Notes: true } } },
+      select: { id: true, name: true, _count: { select: { Notes: true } } },
+    });
+  }
+
+  async searchByQuery(q: string) {
+    return await prisma.pacients.findMany({
+      where: { name: { contains: q } },
+      select: { id: true, name: true, _count: { select: { Notes: true } } },
     });
   }
 }

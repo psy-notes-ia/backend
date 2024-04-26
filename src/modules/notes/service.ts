@@ -1,11 +1,11 @@
 import prisma from "../../prisma";
 
 export default class NotesService {
-  async create({ note, patientId, session, summary, tags, limit, title }: any) {
+  async create({ note, pacientId, session, summary, tags, limit, title }: any) {
     return await prisma.notes.create({
       data: {
         note: note,
-        patientId: patientId,
+        pacientId: pacientId,
         session: session,
         summary: summary,
         tags: tags,
@@ -21,9 +21,11 @@ export default class NotesService {
     });
   }
 
-  async getAll(id: string) {
+  async getAll(id:string) {
     return await prisma.notes.findMany({
-      where: { patientId: id },
+     where:{
+      Pacient:{userId: id}
+     },
       select: {
         id: true,
         title: true,
@@ -31,9 +33,23 @@ export default class NotesService {
         tags: true,
         session: true,
         summary: true,
-
+        Pacient:{select:{name:true}}
       },
-      take:6
+      take: 6,
+    });
+  }
+  async getAllByPacient(id: string) {
+    return await prisma.notes.findMany({
+      where: { pacientId: id },
+      select: {
+        id: true,
+        title: true,
+        note: true,
+        tags: true,
+        session: true,
+        summary: true,
+      },
+      take: 6,
     });
   }
 
@@ -42,10 +58,22 @@ export default class NotesService {
       where: { id },
     });
   }
+
+  async getAllNoteSessions(id: string) {
+    return await prisma.notes.findMany({
+      where: { pacientId: id, AND: { analysed: { not: true } } },
+      select: { session: true, id: true, title: true },
+    });
+  }
+  async searchByQuery(q: string) {
+    return await prisma.notes.findMany({
+      where: { title: { contains: q } },
+    });
+  }
+
   async delete(id: string) {
     return await prisma.notes.delete({
       where: { id },
     });
   }
-
 }

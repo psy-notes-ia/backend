@@ -1,4 +1,6 @@
 import OpenAI from "openai";
+import { z } from "zod";
+import { zodToJsonSchema } from "zod-to-json-schema";
 
 import "dotenv/config";
 
@@ -7,117 +9,74 @@ const openai = new OpenAI({
   organization: process.env.OPENAI_ORG,
 });
 
+
 class OpenAiRepositoryClass {
-  // async generateQuestions(
-  //   formType: string,
-  //   desc: string,
-  //   max_questions: number,
-  //   extra: string
-  // ): Promise<Question[] | null> {
-  //   const amout_ext = extra.split(",").length;
-  //   const totalQuestions = Number(max_questions) + Number(amout_ext);
+  async generateAnalyse(
+    notes: string
+   ): Promise<any | null> {
+    var systemStr = "Como especialista em psicologia e análise comportamental, utilizo anotações detalhadas para compreender o progresso e comportamento dos pacientes.";
+    var promptStr =
+      "Com base nas anotações das sessões terapêuticas, realize uma análise aprofundada e precisa do progresso do paciente, insights comportamentais ao longo das sessões e identifique pontos de atenção relevantes. As anotações de cada sessão estão disponíveis em: "+notes;
 
-  //   var promptStr = `Crie as melhores ${totalQuestions} perguntas para um formulário com o objetivo de: "${desc}". O tipo de formulário é "${formType}". Adicione perguntas adicionais para coletar informações essenciais, como ${extra}${
-  //     extra !== ""
-  //       ? ", onde 'goal' é o nome da variável. Exemplo: name = goal: 'name'"
-  //       : ""
-  //   }. Varie os tipos de resposta, utilize tipos como 'options' ou 'interval' de 1 a 5 para obter respostas mais precisas. Cada pergunta deve conter: question, goal, inputType e options (se inputType for diferente de 'interval').`;
+    const config = { model: "gpt-3.5-turbo-0125", max: 4000 };
 
-  //   var promptStrNPS = `Crie as melhores e somente ${totalQuestions} perguntas para um formulário com o objetivo de: "${desc}". O tipo de formulário é "${formType}". Adicione perguntas adicionais para coletar informações essenciais, como ${extra}${
-  //     extra !== ""
-  //       ? ", onde 'goal' é o nome da variável. Exemplo: name = goal: 'name'"
-  //       : ""
-  //   }. Todas as perguntas devem aceitar apenas o tipo de resposta NPS (1-10). Certifique-se de que o número total de perguntas seja exatamente ${
-  //     max_questions + amout_ext
-  //   }. Cada pergunta deve conter: question, goal, inputType=nps.`;
-
-  //   const gptResponse = await openai.chat.completions.create({
-  //     model: "gpt-3.5-turbo-0125",
-  //     max_tokens: 2000,
-  //     messages: [
-  //       {
-  //         role: "system",
-  //         content:
-  //           "considere que você é um especialista em criação de formulario para obter respostas precisas com o objetivo.",
-  //       },
-  //       {
-  //         role: "user",
-  //         content:
-  //           formType.toLocaleLowerCase() == "nps" ? promptStrNPS : promptStr,
-  //       },
-  //     ],
-
-  //     functions: [
-  //       {
-  //         name: "createQuestionsObj",
-  //         parameters: {
-  //           type: "object",
-  //           properties: {
-  //             questions: {
-  //               type: "array",
-  //               items: {
-  //                 question: { type: "string" },
-  //                 goal: { type: "string" },
-  //                 inputType: {
-  //                   type: "string",
-  //                   description: "tipo de entrada",
-  //                   enum: ["interval", "options"],
-  //                 },
-  //                 "options(if 'type' == options)": "array",
-  //               },
-  //             },
-  //           },
-  //           required: ["questions"],
-  //         },
-  //       },
-  //     ],
-  //     function_call: { name: "createQuestionsObj" },
-  //     temperature: 0.5,
-  //   });
-
-  //   try {
-  //     const res = gptResponse.choices[0].message.function_call?.arguments;
-  //     var quests: Question[] = JSON.parse(res!).questions;
-
-  //     return quests;
-  //   } catch (error) {
-  //     console.log("formato invalido");
-  //     console.log(error);
-  //     console.log(
-  //       gptResponse.choices[0].message.function_call?.arguments.toString()!
-  //     );
-  //     return null;
-  //   }
-  // }
-
-  async generateInsightByNotes(
-    insight: string,
-    companyDescription: string
-  ): Promise<string | null> {
-    var promptStr = `Dados as anotações das sessões terapeuticas, gere uma profunda analise do progresso e insights do paciente conforme o andamento dos encontros, gere tambem ketwords da analise.`;
+    const createInsightsObj = z.object({
+      // insights: z.array(
+      //   z.object({
+      //     insightTitle: z.string(),
+      //     insightDescription: z.string(),
+      //     insightType: z.enum(["positivo", "negativo"]),
+      //   })
+      // ),
+      keywords: z.array(z.string()),
+      result: z.string(),
+      attention_points:z.array(z.string()),
+    });
 
     const gptResponse = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo-0125",
-      max_tokens: 1000,
       messages: [
         {
           role: "system",
-          content:
-            "você é um especialista em psicologia e analise do comportamento de pacientes",
+          content: systemStr,
         },
         { role: "user", content: promptStr },
       ],
-      temperature: 0.4,
+      model: config.model,
+      temperature: 0.5,
+      max_tokens: config.max,
+      functions: [
+        {
+          name: "out",
+          description:
+            "This is the function that returns the result of the agent",
+          parameters: zodToJsonSchema(createInsightsObj),
+        },
+      ],
     });
-
+    
     try {
-      let solution = gptResponse.choices[0].message.content!;
+      const structuredResponse = JSON.parse(
+        gptResponse.choices[0].message!.function_call!.arguments!
+      );
+      var usage = JSON.stringify(gptResponse.usage);
+      console.log(usage);
+      console.log(structuredResponse);
 
-      return solution;
+      let { keywords, result, attentionPoints } = structuredResponse;
+
+      // const all_insights = (insights as []).map((e: any) => {
+      //   return {
+      //     title: e.insightTitle,
+      //     description: e.insightDescription,
+      //     type: e.insightType,
+      //   };
+      // });
+
+      return { keywords, result, attentionPoints };
     } catch (error) {
       console.log("formato invalido");
       console.log(error);
-      console.log(gptResponse.choices[0].message.content!);
+      console.log(gptResponse);
 
       return null;
     }

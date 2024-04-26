@@ -34,39 +34,43 @@ model User {
 model Notes {
   id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tags        String[] @default([])
-  status      String   @default("ready_for_analyse")
+  analysed    Boolean  @default(false)
   title       String?
   note        String
   summary     String
   session     String
   description String?
 
-  patientId String   @db.Uuid
+  pacientId String   @db.Uuid
   createdAt DateTime @default(now())
   updateAt  DateTime @updatedAt
 
-  Pacient Pacients? @relation(fields: [patientId], references: [id])
+  Pacient Pacients? @relation(fields: [pacientId], references: [id])
 }
 
 model Analyse {
-  id       String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  title    String?
-  analysed Boolean  @default(false)
-  result   String?
-  usage    Json?
-  keywords String[]
-  sessions String[]
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title           String?
+  error           Boolean  @default(false)
+  analysed        Boolean  @default(false)
+  result          String?
+  usage           Json?
+  attentionPoints String[]
+  keywords        String[]
+  sessions        String[]
 
-  patientId String   @db.Uuid
+  pacientId String   @db.Uuid
   createdAt DateTime @default(now())
   updateAt  DateTime @updatedAt
 
-  Pacient Pacients? @relation(fields: [patientId], references: [id])
+  Pacient Pacients? @relation(fields: [pacientId], references: [id])
 }
 
 model Pacients {
-  id   String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name String
+  id     String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name   String
+  reason String? @default("")
+  age    Int?    @default(0)
 
   userId    String   @db.Uuid
   createdAt DateTime @default(now())
