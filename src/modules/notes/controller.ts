@@ -1,13 +1,16 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import FormService from "./service";
 import crypto from "crypto";
+import { EncryptData } from "../../utils/crypto";
 
 const service = new FormService();
 
 export default class FormController {
   async createNote(request: FastifyRequest, reply: FastifyReply) {
     const data: any = request.body;
-    data.summary = (data.note as string).substring(0, 100) + "...";
+    data.summary = EncryptData((data.note as string).substring(0, 100) + "...");
+    data.note = EncryptData(data.note);
+    
     const res = await service.create(data);
 
     return reply.status(201).send(res.id);

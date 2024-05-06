@@ -15,7 +15,6 @@ jobs:
         node-version: [20.10.0]
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      NEXT_PUBLIC_BACKEND_URL: ${{ secrets.NEXT_PUBLIC_BACKEND_URL }}
       FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
       OPENAI_ORG: ${{ secrets.OPENAI_ORG }}
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -26,6 +25,7 @@ jobs:
       STRIPE_ENDPOINT_SECRET: ${{ secrets.STRIPE_ENDPOINT_SECRET }}
       EMAILSENDER_API_KEY: ${{ secrets.EMAILSENDER_API_KEY }}
       AUTH_SK: ${{ secrets.AUTH_SK }}
+      ENCRYPTION_KEY: ${{ secrets.ENCRYPTION_KEY }}
 
     steps:
     - uses: actions/checkout@v3
@@ -42,22 +42,6 @@ jobs:
         npm i -g pnpm
         pnpm i --fix-lockfile
 
-    - name: Load env
-      run: |
-        touch .env
-          echo "DATABASE_URL=${DATABASE_URL}" >> .env
-          echo "NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL}" >> .env
-          echo "FRONTEND_URL=${FRONTEND_URL}" >> .env
-          echo "OPENAI_ORG=${OPENAI_ORG}" >> .env
-          echo "OPENAI_API_KEY=${OPENAI_API_KEY}" >> .env
-          echo "REDIS_URL=${REDIS_URL}" >> .env
-          echo "STRIPE_SK=${STRIPE_SK}" >> .env
-          echo "STRIPE_PUBLISHABLE_KEY=${STRIPE_PUBLISHABLE_KEY}" >> .env
-          echo "STRIPE_COUPON=${STRIPE_COUPON}" >> .env
-          echo "STRIPE_ENDPOINT_SECRET=${STRIPE_ENDPOINT_SECRET}" >> .env
-          echo "EMAILSENDER_API_KEY=${EMAILSENDER_API_KEY}" >> .env
-          echo "AUTH_SK=${AUTH_SK}" >> .env 
-
     - name: Prisma Generate
       run: npx prisma generate
 
@@ -66,14 +50,7 @@ jobs:
    
     - name: Build APP
       run: pnpm build
-
-    - name: Load Worker env
-      run: |
-        touch /root/actions-runner/_work/server-api/server-api/worker/.env
-          echo "DATABASE_URL=${DATABASE_URL}" >> /root/actions-runner/_work/server-api/server-api/worker/.env
-          echo "OPENAI_ORG=${OPENAI_ORG}" >> /root/actions-runner/_work/server-api/server-api/worker/.env
-          echo "OPENAI_API_KEY=${OPENAI_API_KEY}" >> /root/actions-runner/_work/server-api/server-api/worker/.env
-          
+    
     - name: Build Worker
       run: cd /root/actions-runner/_work/server-api/server-api/worker &&  pnpm i && pnpm build
     - run: npx prisma generate

@@ -2,6 +2,7 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import prisma from "../../prisma";
 import sendToQueue from "../../messaging";
 import OpenAiRepository from "../../integrations/openai";
+import { DecryptData } from "../../utils/crypto";
 
 export default async function CreateNotesAnalyse(
   request: FastifyRequest,
@@ -23,7 +24,7 @@ export default async function CreateNotesAnalyse(
     `Motivo da terapia:${pacient?.reason}\n` +
     dbNotes
       .map((e) => {
-        return `sessão:${e.session},anotação:${e.note}`;
+        return `sessão:${e.session},anotação:${DecryptData(e.note)}`;
       })
       .toString()
       .trim();

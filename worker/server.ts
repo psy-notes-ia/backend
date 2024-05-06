@@ -5,6 +5,7 @@ dotenv.config();
 
 import { PrismaClient } from "@prisma/client";
 import OpenAiRepository from "./openai";
+import { EncryptData } from "./utils/crypto";
 const prisma = new PrismaClient();
 
 const QUEUE_NAME = "ia-analyse";
@@ -42,9 +43,8 @@ async function startConsumer(consumerNumber: number) {
               analysed: true,
               usage: response.usage,
               attentionPoints: response.attention_points,
-              result: response.result,
+              result: EncryptData(response.result),
               keywords: response.keywords,
-            
             },
           });
 
