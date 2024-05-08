@@ -13,20 +13,6 @@ jobs:
     strategy:
       matrix:
         node-version: [20.10.0]
-    env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
-      OPENAI_ORG: ${{ secrets.OPENAI_ORG }}
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      REDIS_URL: ${{ secrets.REDIS_URL }}
-      STRIPE_SK: ${{ secrets.STRIPE_SK }}
-      STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
-      STRIPE_COUPON: ${{ secrets.STRIPE_COUPON }}
-      STRIPE_ENDPOINT_SECRET: ${{ secrets.STRIPE_ENDPOINT_SECRET }}
-      EMAILSENDER_API_KEY: ${{ secrets.EMAILSENDER_API_KEY }}
-      AUTH_SK: ${{ secrets.AUTH_SK }}
-      ENCRYPTION_KEY: ${{ secrets.ENCRYPTION_KEY }}
-
     steps:
     - uses: actions/checkout@v3
     - uses: pnpm/action-setup@v2
@@ -41,6 +27,19 @@ jobs:
       run: |
         npm i -g pnpm
         pnpm i --fix-lockfile
+    - name: Create .env file
+      run: |
+          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
+          echo "FRONTEND_URL=${{ secrets.FRONTEND_URL }}" >> .env
+          echo "OPENAI_ORG=${{ secrets.OPENAI_ORG }}" >> .env
+          echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> .env
+          echo "STRIPE_SK=${{ secrets.STRIPE_SK }}" >> .env
+          echo "STRIPE_PUBLISHABLE_KEY=${{ secrets.STRIPE_PUBLISHABLE_KEY }}" >> .env
+          echo "STRIPE_COUPON=${{ secrets.STRIPE_COUPON }}" >> .env
+          echo "STRIPE_ENDPOINT_SECRET=${{ secrets.STRIPE_ENDPOINT_SECRET }}" >> .env
+          echo "EMAILSENDER_API_KEY=${{ secrets.EMAILSENDER_API_KEY }}" >> .env
+          echo "AUTH_SK=${{ secrets.AUTH_SK }}" >> .env
+          echo "ENCRYPTION_KEY=${{ secrets.ENCRYPTION_KEY }}" >> .env
 
     - name: Prisma Generate
       run: npx prisma generate
