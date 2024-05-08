@@ -50,15 +50,15 @@ jobs:
     - name: Build APP
       run: pnpm build
     
-    - name: Run and restart server
-      run: cd /root/actions-runner/_work/backend/backend
-    - run: pm2 restart 0
+    # - name: Run and restart server
+    #   run: cd /root/actions-runner/_work/backend/backend
+    # - run: pm2 restart 0
     
     - name: Build Worker
       run: cd /root/actions-runner/_work/backend/backend/worker &&  pnpm i && pnpm build
     - run: npx prisma generate
 
-    - name: Run and restart worker
-      run: cd /root/actions-runner/_work/backend/backend/worker
-    - run: pm2 restart 1
+    # - name: Run and restart worker
+    #   run: cd /root/actions-runner/_work/backend/backend/worker
+    # - run: pm2 restart 1
     
