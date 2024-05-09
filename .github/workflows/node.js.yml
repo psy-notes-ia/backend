@@ -63,6 +63,6 @@ jobs:
     - run: npx prisma generate
 
     - name: Run and restart worker
-      run: sudo cd /home/ubuntu/actions-runner/_work/backend/backend/worker
+      run: cd /home/ubuntu/actions-runner/_work/backend/backend/worker
     - run: pm2 restart 1
     
