@@ -23,10 +23,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - name: Install Node.js dependencies
-      run: |
-        npm i -g pnpm
-        pnpm i --fix-lockfile
+
     - name: Create .env file
       run: |
           echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
@@ -40,6 +37,12 @@ jobs:
           echo "EMAILSENDER_API_KEY=${{ secrets.EMAILSENDER_API_KEY }}" >> .env
           echo "AUTH_SK=${{ secrets.AUTH_SK }}" >> .env
           echo "ENCRYPTION_KEY=${{ secrets.ENCRYPTION_KEY }}" >> .env
+
+    - name: Install pnpm
+      run: npm i -g pnpm
+    
+    - name: Install Node.js dependencies
+      run: pnpm i --fix-lockfile
 
     - name: Prisma Generate
       run: npx prisma generate
