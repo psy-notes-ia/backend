@@ -55,14 +55,14 @@ jobs:
       run: pnpm build
     
     - name: Run and restart server
-      run: sudo cd /root/actions-runner/_work/backend/backend
+      run: cd /actions-runner/_work/backend/backend
     - run: pm2 restart 0
     
     - name: Build Worker
-      run: sudo cd /root/actions-runner/_work/backend/backend/worker &&  pnpm i && pnpm build
+      run: cd /actions-runner/_work/backend/backend/worker &&  pnpm i && pnpm build
     - run: npx prisma generate
 
     - name: Run and restart worker
-      run: sudo cd /root/actions-runner/_work/backend/backend/worker
+      run: sudo cd /actions-runner/_work/backend/backend/worker
     - run: pm2 restart 1
     
