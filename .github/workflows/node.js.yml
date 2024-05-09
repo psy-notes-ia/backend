@@ -24,9 +24,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - name: Install Node.js dependencies
-      run: |
-        npm i -g pnpm
-        pnpm i --fix-lockfile
+      run: npm i --fix-lockfile
     - name: Create .env file
       run: |
           echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
@@ -48,14 +46,14 @@ jobs:
       run: npx prisma migrate deploy
    
     - name: Build APP
-      run: pnpm build
+      run: npm run build
     
     # - name: Run and restart server
     #   run: cd /root/actions-runner/_work/backend/backend
     # - run: pm2 restart 0
     
     - name: Build Worker
-      run: cd /root/actions-runner/_work/backend/backend/worker &&  pnpm i && pnpm build
+      run: cd /root/actions-runner/_work/backend/backend/worker && npm i && npm run build
     - run: npx prisma generate
 
     # - name: Run and restart worker
