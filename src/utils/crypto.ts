@@ -38,6 +38,7 @@ export const DecryptData = (data: string) => {
     decrypted = decipher.update(encryptedData);
     decrypted = Buffer.concat([decrypted, decipher.final()]);
   } catch (err: any) {
+    console.log(err);
     throw new Error('Decryption failed: ' + err.message);
   }
   

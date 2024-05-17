@@ -4,6 +4,11 @@ import sendToQueue from "../../messaging";
 import OpenAiRepository from "../../integrations/openai";
 import { DecryptData } from "../../utils/crypto";
 
+
+import Security from "../../utils/security";
+
+const security = new Security();
+
 export default async function CreateNotesAnalyse(
   request: FastifyRequest,
   reply: FastifyReply
@@ -24,7 +29,7 @@ export default async function CreateNotesAnalyse(
     `Motivo da terapia:${pacient?.reason}\n` +
     dbNotes
       .map((e) => {
-        return `sessão:${e.session},anotação:${DecryptData(e.note)}`;
+        return `sessão:${e.session},anotação:${security.decrypt(e.note)}`;
       })
       .toString()
       .trim();
