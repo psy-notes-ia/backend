@@ -11,9 +11,27 @@ export default class PacientService {
   }
 
   async delete(id: string) {
-    return await prisma.pacients.delete({
+    const deleteAnalyse = prisma.analyse.deleteMany({
+      where: {
+        pacientId: id,
+      },
+    });
+
+    const deleteNotes = prisma.notes.deleteMany({
+      where: {
+        pacientId: id,
+      },
+    });
+
+    const deleteUser = prisma.pacients.delete({
       where: { id },
     });
+
+    await prisma.$transaction([
+      deleteAnalyse,
+      deleteNotes,
+      deleteUser,
+    ]);
   }
 
   async fetchAll(id: string) {

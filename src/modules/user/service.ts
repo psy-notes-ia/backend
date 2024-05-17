@@ -8,9 +8,7 @@ export default class UserService {
     });
   }
 
-  async createStartForm(id: string, data: string) {
-    return await prisma.startForm.create({ data: { data: data, userId: id } });
-  }
+
   async getInfoById(id: string) {
     return await prisma.user.findUnique({ where: { id } });
   }
@@ -21,15 +19,5 @@ export default class UserService {
       data: { firstAccess: false },
     });
   }
-  async getFormsCountByInterval(userId: string, start: Date, end: Date) {
-    return await prisma.form.count({
-      where: {
-        userId: userId,
-        createdAt: {
-          gte: start,
-          lte: end,
-        },
-      },
-    });
-  }
+
 }
