@@ -78,12 +78,13 @@ export default class FormController {
   }
 
   async updateNote(request: FastifyRequest, reply: FastifyReply) {
-    const { id }: any = request.params;
+    const { noteId }: any = request.params;
     const { note }: any = request.body;
 
-    if (!id) throw new Error("id not provided");
+    console.log(note);
+    if (!noteId) throw new Error("id not provided");
 
-    const res = await service.updateNote(id, note);
+    const res = await service.updateNote(noteId,security.encrypt(note)!);
 
     return reply.status(200).send(res);
   }
