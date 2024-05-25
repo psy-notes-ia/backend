@@ -12,44 +12,44 @@ export default class UserController {
 
     return reply.send({ user });
   }
-  async availableSub(request: FastifyRequest, reply: FastifyReply) {
-    const { id }: any = request.user;
-    let user = await service.getInfoById(id);
-    let available = false;
-    const currentTimestamp = new Date().getTime();
+  // async availableSub(request: FastifyRequest, reply: FastifyReply) {
+  //   const { id }: any = request.user;
+  //   let user = await service.getInfoById(id);
+  //   let available = false;
+  //   const currentTimestamp = new Date().getTime();
 
-    try {
-      const { monthLimit }: any = user?.metadata;
+  //   try {
+  //     const { monthLimit }: any = user?.metadata;
 
-      const data = await gateway.retrieveSubscriptionPeriod(
-        user?.stripeSubscriptionId!
-      );
+  //     const data = await gateway.retrieveSubscriptionPeriod(
+  //       user?.stripeSubscriptionId!
+  //     );
 
-      const total = await service.getFormsCountByInterval(
-        id,
-        new Date(data.start),
-        new Date(currentTimestamp)
-      );
+  //     const total = await service.getFormsCountByInterval(
+  //       id,
+  //       new Date(data.start),
+  //       new Date(currentTimestamp)
+  //     );
 
-      const totalAvailable = monthLimit * data.recurring!;
+  //     const totalAvailable = monthLimit * data.recurring!;
 
-      if (total < totalAvailable) {
-        available = true;
-      }
-    } catch (error) {
-      console.log(error);
-    }
-    return reply.send({ available });
-  }
+  //     if (total < totalAvailable) {
+  //       available = true;
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  //   return reply.send({ available });
+  // }
 
-  async addStartFormAnswear(request: FastifyRequest, reply: FastifyReply) {
-    const { id }: any = request.user;
-    const data = (await request.body) as string;
+  // async addStartFormAnswear(request: FastifyRequest, reply: FastifyReply) {
+  //   const { id }: any = request.user;
+  //   const data = (await request.body) as string;
 
-    await service.createStartForm(id, data);
+  //   await service.createStartForm(id, data);
 
-    await service.updateFirstAcess(id);
+  //   await service.updateFirstAcess(id);
 
-    return reply.status(200).send();
-  }
+  //   return reply.status(200).send();
+  // }
 }

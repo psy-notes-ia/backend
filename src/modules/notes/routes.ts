@@ -12,7 +12,7 @@ function NotesRouter(router: any, opts: any, done: any) {
   router.get("/single/:noteId", handler.getNotesById);
   router.get("/query/:q", handler.getByQuery);
   router.delete("/:noteId", handler.deleteNote);
-  router.patch("/:noteId", handler.updateNote);
+  router.patch("/:pacientId", handler.updateNote);
   done();
 }
 
