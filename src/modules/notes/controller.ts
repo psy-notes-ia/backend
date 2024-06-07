@@ -81,7 +81,6 @@ export default class FormController {
     const { noteId }: any = request.params;
     const { note }: any = request.body;
 
-    console.log(note);
     if (!noteId) throw new Error("id not provided");
 
     const res = await service.updateNote(noteId,security.encrypt(note)!);
